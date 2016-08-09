@@ -128,53 +128,39 @@ class Casino
 	end
 
 	def play_game
-		@game_index.to_i
 		if @games[@game_index].min > @player.bankroll.bankroll
-			puts "I'm sorry, the minimum bet for #{@games[game_choice].class} is \$#{@games[game_choice].min}."
+			puts "I'm sorry, the minimum bet for #{@games[game_choice].name} is \$#{@games[game_choice].min}."
 			puts "You only have \$#{@bankroll.bankroll}."
 			choose_game
 		end
-		
-		@games[@game_index].instructions
-		if @games[@game_index].name.to_s.downcase == 'slots'
+		while true
 			while true
-				puts "Your balance is #{@player.bankroll.bankroll}"
-				amount_won_lost = @games[@game_index].start
-				choose_game if amount_won_lost.to_s == 'quit'
-				@player.bankroll.game_result(amount_won_lost, @games[@game_index])
-				#slots should return an amount won or lost each time
-				if @games[@game_index].min > @player.bankroll.bankroll
-						puts "You are out of money!!  Back to main menu."
-						main_menu
-					end
-			end
-
-		else
-			while true
-				while true
-					puts 'How much would you like to play?'
-					puts "Your balance is #{@player.bankroll.bankroll}"
-					user_bet = gets.strip.to_f
-					bet_options(user_bet)
-					if user_bet > @player.bankroll.bankroll
-						puts "You don\'t have that much! You must play less than \$#{@player.bankroll.bankroll}."
-					else
-						break
-					end
-				end
-				win, mult = @games[game_choice].start
-				if win == true
-					@player.bankroll.game_result(user_bet * mult, games[game_index].class)
+				puts "How much money of your \$#{@player.bankroll.bankroll} would you like to play here?"
+				money_commit = gets.strip
+				bet_options(money_commit)
+				if money_commit.to_f > @player.bankroll.bankroll
+					puts "You don\'t have that much! You must play less than \$#{@player.bankroll.bankroll}."
 				else
-					return @player.bankroll.game_result(-user_bet, games[game_index].class)
+					break
 				end
 			end
+			@games[@game_index].instructions
+			@games[@game_index].game_money = money_commit
+			game = @games[@game_index].name
+			player_commit, returned_money = @games[@game_index].start
+			@player.bankroll.game_result(player_commit, returned_money, game)
+			main_menu
 		end
 	end
+
 	def bet_options(user_input)
 		case user_input.strip.downcase
 		when /bac.*/
 			choose_game
+		when /^\$?\d*\.*\d+$/
+
+		else
+			puts 'Enter an amount or use "back" to return to menu.'
 		end
 	end
 
@@ -183,6 +169,8 @@ class Casino
 		when /check.*/
 			@bankroll.check_balance
 			choose_game
+		when /bac.*/
+			main_menu
 		end
 	end
 
