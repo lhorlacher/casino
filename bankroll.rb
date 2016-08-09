@@ -30,9 +30,10 @@ class Bankroll
 		end
 	end
 
-	def game_result(amount, game_name)
-		@bankroll += amount
-		@history.push([game_name, amount])
+	def game_result(money_commit, money_final, game_name)
+		@bankroll = @bankroll.to_f - money_commit.to_f + money_final.to_f
+		difference = money_final.to_f - money_commit.to_f
+		@history.push([game_name, difference.to_f, @bankroll.to_f])
 	end
 
 	def check_balanace
@@ -100,7 +101,7 @@ class Bankroll
 
 	def mom_money
 		puts "Oh, that's terrible! How much do you need?"
-		puts "**Hint: Depends how much of her $500 SS check is left**"
+		puts "**Hint: If you are too greedy, she won't help**"
 		money_count = 0
 		while money_count < 2
 		money_count += 1
