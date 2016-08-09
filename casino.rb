@@ -14,7 +14,7 @@ class Casino
 
 	def initialize
 		puts 'Welcome to the Casino!'
-		@games = [Highlow.new, Slots.new]
+		@games = [Slots.new]
 		create_player
 	end
 

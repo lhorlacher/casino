@@ -39,8 +39,3 @@ class Slots
 	end
 end
 
-slots = Slots.new
-while true
-slots.instructions
-slots.start
-end
