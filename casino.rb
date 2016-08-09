@@ -76,6 +76,7 @@ class Casino
 
 	def get_more_money
 		@player.bankroll.money_options
+		main_menu
 	end
 
 	def switch_player
@@ -135,13 +136,17 @@ class Casino
 		end
 		
 		@games[@game_index].instructions
-		if @games[@game_index].class.to_s.downcase == slots
+		if @games[@game_index].name.to_s.downcase == 'slots'
 			while true
 				puts "Your balance is #{@player.bankroll.bankroll}"
 				amount_won_lost = @games[@game_index].start
 				choose_game if amount_won_lost.to_s == 'quit'
 				@player.bankroll.game_result(amount_won_lost, @games[@game_index])
 				#slots should return an amount won or lost each time
+				if @games[@game_index].min > @player.bankroll.bankroll
+						puts "You are out of money!!  Back to main menu."
+						main_menu
+					end
 			end
 
 		else
