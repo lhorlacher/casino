@@ -1,6 +1,6 @@
 require_relative 'player'
 require_relative 'bankroll'
-#require_relative 'highlow'
+require_relative 'high-low'
 require_relative 'slots'
 # require 'pry'
 # require 'colorize'
@@ -14,7 +14,7 @@ class Casino
 		@players_list = []
 		@player = nil
 		puts 'Welcome to the Casino!'
-		@games = [Slots.new]
+		@games = [Slots.new, High_low.new]
 		main_menu
 		# create_player
 	end
@@ -100,7 +100,7 @@ class Casino
 		end
 		@player = @players_list[user_input.to_i - 1]
 		puts "Now playing as #{@players_list[user_input.to_i - 1].name}"
-		main_menu	
+		main_menu
 	end
 
 	def choose_game
@@ -120,7 +120,7 @@ class Casino
 			menu_options(choice)
 			if choice.to_i <= 0 || choice.to_i > num
 				puts 'Please choose a number from the menu'
-			else 
+			else
 				@game_index = choice.to_i - 1
 				play_game
 			end
@@ -147,8 +147,8 @@ class Casino
 			@games[@game_index].instructions
 			@games[@game_index].game_money = money_commit
 			game = @games[@game_index].name
-			player_commit, returned_money = @games[@game_index].start
-			@player.bankroll.game_result(player_commit, returned_money, game)
+			returned_money = @games[@game_index].start
+			@player.bankroll.game_result(money_commit, returned_money, game)
 			main_menu
 		end
 	end

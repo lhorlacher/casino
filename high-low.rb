@@ -1,10 +1,10 @@
 require 'pry'
 class High_low
-  attr_accessor :mult, :game_money, :name, :min_bet, :game_bet
+  attr_accessor :mult, :game_money, :name, :min, :game_bet
   def initialize
     @mult = 1.1
     @name = 'High Low'
-    @min_bet = 1
+    @min = 1
     @game_money = 500 #game_money
     @game_bet = 0
   end
@@ -55,11 +55,11 @@ class High_low
     print "--> "
 
     @game_bet = gets.strip.to_f
-    if @game_bet < @min_bet
+    if @game_bet < @min
       puts ""
       puts "Sorry, the minnimum bet is $1.00"
       puts ""
-    elsif @game_bet > @game_money
+    elsif @game_bet.to_f > @game_money.to_f
       puts ""
       puts "Sorry, you can't bet that much. Your available"
       puts "balance is #{@game_money}"
@@ -69,7 +69,7 @@ class High_low
       puts ""
       puts "you have bet #{@game_bet}!"
       puts ""
-      @game_money = @game_money - @game_bet
+      @game_money = @game_money.to_f - @game_bet.to_f
     end
     game
   end
@@ -130,20 +130,12 @@ class High_low
       puts ""
       puts "Game over!"
       puts ""
-      puts "your multiplier is #{@mult.round(2)}"
+      puts "Your multiplier is #{@mult.round(2)}"
       @money_won = @mult * @game_bet
-      puts "You won $#{@money_won.round(2) - @game_bet.round(2)}!"
+      puts "You won $#{(@money_won.round(2) - @game_bet.round(2)).round(2)}!"
       @game_money = @money_won + @game_money
       puts "You now have $#{@game_money}"
       return @game_money
-
-      # return true, @mult
-
-
     end
   end
 end
-
-
-hilo = High_low.new
-hilo.start
