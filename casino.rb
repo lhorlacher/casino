@@ -1,21 +1,22 @@
 require_relative 'player'
 require_relative 'bankroll'
-require_relative 'highlow'
+#require_relative 'highlow'
 require_relative 'slots'
-require 'pry'
-require 'colorize'
+# require 'pry'
+# require 'colorize'
 
 
 class Casino
-	@games = []
-	@game_index = nil
-	@players_list = []
-	@player = nil
 
 	def initialize
+		@games = []
+		@game_index = nil
+		@players_list = []
+		@player = nil
 		puts 'Welcome to the Casino!'
 		@games = [Slots.new]
-		create_player
+		main_menu
+		# create_player
 	end
 
 	def main_menu
@@ -35,9 +36,14 @@ class Casino
 		end
 		case user_input.to_s
 		when '1'
-			play_game(choose_game)
+			choose_game
 		when '2'
-			@player.bankroll.bankroll
+			if @player == nil
+				puts 'No player selected to check bankroll.'
+			else
+				puts "#{@player.bankroll.bankroll}"
+			end
+			main_menu
 		when '3'
 			get_more_money
 		when '4'
@@ -46,6 +52,7 @@ class Casino
 			create_player
 		when '6'
 			quit
+		end
 	end
 
 	def create_player
@@ -59,7 +66,7 @@ class Casino
 				puts "Now playing as #{@players_list.last.name}"
 				main_menu
 			when /^n.*/
-				puts "You created a player, but have chosen not to use '#{@players_list.last}"
+				puts "You created a player, but have chosen not to use '#{@players_list.last.name}"
 				main_menu
 			else
 				puts 'Please choose yes or no.'
@@ -78,9 +85,9 @@ class Casino
 		end
 		puts 'Which player would you like to use?'
 		x = 1
-		@players_list.each |player|
-			puts "#{x}. #{@player.name} --- #{@player.bankroll}"
-			puts
+		@players_list.each do |player|
+			puts "#{x}. #{player.name} --- #{player.bankroll.bankroll}"
+			x += 1
 		end
 		while true
 		user_input = gets.strip
@@ -90,12 +97,13 @@ class Casino
 				break
 			end
 		end
-		@player = @players_list[user_input - 1]
-		puts "Now playing as #{@players_list[user_input - 1]}"	
+		@player = @players_list[user_input.to_i - 1]
+		puts "Now playing as #{@players_list[user_input.to_i - 1].name}"
+		main_menu	
 	end
 
 	def choose_game
-		if @players_list.count < 1
+		if @players_list.length < 1
 			puts 'You must create a player first.'
 			main_menu
 		end
@@ -103,7 +111,7 @@ class Casino
 		puts 'Which game would you like to play?'
 		puts "You are playing as #{@player.name} with \$#{@player.bankroll.bankroll}"
 		@games.each do |games|
-			puts "#{num}. #{@games.class}"
+			puts "#{num}. #{games.name}"
 			num += 1
 		end
 		while true
@@ -112,22 +120,22 @@ class Casino
 			if choice.to_i <= 0 || choice.to_i > num
 				puts 'Please choose a number from the menu'
 			else 
-				@game_index = choice
-				break
+				@game_index = choice.to_i - 1
+				play_game
 			end
 		end
-		choice - 1
 	end
 
 	def play_game
-		if @games[@game_index].min > @bankroll.bankroll
+		@game_index.to_i
+		if @games[@game_index].min > @player.bankroll.bankroll
 			puts "I'm sorry, the minimum bet for #{@games[game_choice].class} is \$#{@games[game_choice].min}."
 			puts "You only have \$#{@bankroll.bankroll}."
 			choose_game
 		end
 		
 		@games[@game_index].instructions
-		if @games(@game_index).class.to_s.downcase == slots
+		if @games[@game_index].class.to_s.downcase == slots
 			while true
 				puts "Your balance is #{@player.bankroll.bankroll}"
 				amount_won_lost = @games[@game_index].start
@@ -137,23 +145,24 @@ class Casino
 			end
 
 		else
-		while true
 			while true
-				puts 'How much would you like to play?'
-				puts "Your balance is #{@player.bankroll.bankroll}"
-				user_bet = gets.strip.to_f
-				bet_options(user_bet)
-				if user_bet > @player.bankroll.bankroll
-					puts "You don\'t have that much! You must play less than \$#{@player.bankroll.bankroll}."
-				else
-					break
+				while true
+					puts 'How much would you like to play?'
+					puts "Your balance is #{@player.bankroll.bankroll}"
+					user_bet = gets.strip.to_f
+					bet_options(user_bet)
+					if user_bet > @player.bankroll.bankroll
+						puts "You don\'t have that much! You must play less than \$#{@player.bankroll.bankroll}."
+					else
+						break
+					end
 				end
-			end
-			win, mult = @games[game_choice].start
-			if win == true
-				@player.bankroll.game_result(user_bet * mult, games[game_index].class)
-			else
-				@player.bankroll.game_result(-user_bet, games[game_index].class)
+				win, mult = @games[game_choice].start
+				if win == true
+					@player.bankroll.game_result(user_bet * mult, games[game_index].class)
+				else
+					return @player.bankroll.game_result(-user_bet, games[game_index].class)
+				end
 			end
 		end
 	end
@@ -174,7 +183,8 @@ class Casino
 
 	def quit
 		exit(0)
+	end
 end
 
 
-Casino.new.main_menu
+Casino.new

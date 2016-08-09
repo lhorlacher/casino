@@ -2,11 +2,13 @@
 # require 'colorize'
 
 class Slots
+	attr_accessor :name, :min
 	def initialize
 		@spool1 = ['cherries', 'grapes', 'oranges', 'apples', 'bannana', 'peach']
 		@spool2 = ['cherries', 'grapes', 'oranges', 'apples', 'bannana', 'peach']
 		@spool3 = ['cherries', 'grapes', 'oranges', 'apples', 'bannana', 'peach']
 		@min = 1.00
+		@name = Slots
 	end
 
 	def instructions

@@ -4,11 +4,11 @@
 require_relative 'bankroll'
 
 class Player
-attr_accessor :name, :good_luck, :back_luck
+attr_accessor :name, :good_luck, :back_luck, :bankroll
 
 	def initialize
 		@name, @good_luck, @bad_luck = name_setup
-		bankroll = Bankroll.new
+		@bankroll = Bankroll.new
 	end
 
 	def name_setup
@@ -22,14 +22,14 @@ attr_accessor :name, :good_luck, :back_luck
 				break
 			end
 		end
-	luck
+	luck(name)
 	end
 
-	def luck
+	def luck(name)
 		puts "Now we need some general information about you.\n\n"
-		puts "On a scale of 0 - 9, how much do you like U2?"
+		puts "On a scale of 0 - ∞, how much do you like U2?"
 		u2 = gets.strip.to_i
-		puts "What is your favorite 1-digit number?"
+		puts "What is your favorite number?"
 		digit = gets.strip.to_i
 		puts "How old is your favorite sibling? (could be you)"
 		age = gets.strip.to_i
@@ -41,5 +41,3 @@ attr_accessor :name, :good_luck, :back_luck
 	end
 
 end
-
-lonnie = Player.new
