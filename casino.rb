@@ -2,7 +2,8 @@ require_relative 'player'
 require_relative 'bankroll'
 require_relative 'high-low'
 require_relative 'slots'
-require_relative 'randomluck.rb'
+require_relative 'randomluck'
+require_relative 'craps'
 # require 'pry'
 # require 'colorize'
 
@@ -14,7 +15,7 @@ class Casino
 		@players_list = []
 		@player = nil
 		puts 'Welcome to the Casino!'
-		@games = [Slots.new, High_low.new]
+		@games = [Slots.new, High_low.new, Craps.new]
 		@luck = Luck.new
 		main_menu
 		# create_player
@@ -42,7 +43,7 @@ class Casino
 			if @player == nil
 				puts 'No player selected to check bankroll.'
 			else
-				@player.bankroll.check_balance
+				puts "#{@player.bankroll.bankroll}"
 			end
 			main_menu
 		when '3'

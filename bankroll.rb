@@ -6,7 +6,7 @@ class Bankroll
 
 	def initialize
 		@starting_value = 300
-		@bankroll = 500
+		@bankroll = 300
 		@mom = true
 		@mom_budget = 1 + rand(200)
 		@history = []

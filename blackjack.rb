@@ -62,7 +62,7 @@ class BlackJack
 		dealer_second_card = @deck.deal_card
 		puts "Dealer's second card is #{dealer_second_card}"
 		dealer_card_tracker(dealer_second_card)
-		if card_sum(player_cards)
+		if card_sum(player_cards) == 21
 			puts "You have blackjack!"
 			puts "The dealer turns over his hidden card to reveal: #{@hidden_card}"
 			puts "The dealer's total is #{card_sum(dealer_cards)}"
@@ -71,7 +71,7 @@ class BlackJack
 				return @game_money = @game_money + @bet
 			else
 				puts "You win!! You bet #{@bet}. You win #{@bet * 1.5}!"
-				@game_money = @game_money + @bet * 1.5
+				return @game_money = @game_money + @bet * 1.5
 			end
 		else
 			hit_or_stay
@@ -122,7 +122,7 @@ class BlackJack
 				@player_card_tracker(new_card)
 				puts "Your new card is #{new_card}"
 				puts "Your total is #{card_sum(@player_cards)}"
-				if card_sum(player_cards) > 21
+				if card_sum(@player_cards) > 21
 					puts "You bust! You lost \$#{bet}."
 					return start
 				end
@@ -137,21 +137,26 @@ class BlackJack
 
 	def dealer_hit_or_stay
 		puts "Dealer shows his hidden card which is: #{@dealer_hidden}"
-		puts "That means dealer total is #{card_sum(dealer_cards)}"
+		puts "That means dealer total is #{card_sum(@dealer_cards)}"
 		if card_sum(dealer_cards) == 21
 			puts "Dealer Blackjack! Dealer wins! You lose \$#{@bet}"
-			return @game_money
+			return start
 		elsif card_sum(dealer_cards) > card_sum(player_cards)
-			puts "Dealer wins with a total of #{card_sum(dealer_cards)}. You have #{card_sum(player_cards)}"
-			return @game_money
-		else
-			puts "Dealer total is #{card_sum(dealer_cards)}. He takes another card..."
-			puts "The new card is #{new_card = @deck.deal_card}"
-			dealer_card_tracker(new_card)
-			puts "Dealer total is now #{card_sum(dealer_cards)}"
-			if card_sum(dealer_cards) > card_sum(player_cards) && card_sum(dealer_cards) <= 21
-				puts "Dealer wins with a total of #{card_sum(dealer_cards)}. You have #{card_sum(player_cards)}"
-			elsif
+			puts "Dealer wins with a total of #{card_sum(@dealer_cards)}. You have #{card_sum(@player_cards)}"
+			return start
+		elsif card_sum(dealer_cards) <= 16
+			while true
+				puts "Dealer total is #{card_sum(@dealer_cards)}. He takes another card..."
+				puts "The new card is #{new_card = @deck.deal_card}"
+				dealer_card_tracker(new_card)
+				puts "Dealer total is now #{card_sum(@dealer_cards)}"
+				if card_sum(@dealer_cards) > card_sum(@player_cards) && card_sum(@dealer_cards) <= 21
+					puts "Dealer wins with a total of #{card_sum(@dealer_cards)}. You have #{card_sum(@player_cards)}"
+					return start
+				elsif card_sum(@dealer_cards) > 21
+					puts "Dealer bust! You win!"
+					return start
+				elsif
 
 
 

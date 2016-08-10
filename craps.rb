@@ -1,10 +1,10 @@
 class Craps
-	attr_accessor :game_money, :name, :min_bet
+	attr_accessor :game_money, :name, :min
 	
 	def initialize
 		@game_money = 100
 		@name = "Craps"
-		@min_bet = 10
+		@min = 10
 		
 		@pass = ""
 		@pass_bet = 0
@@ -95,7 +95,7 @@ class Craps
 	end
 
 	def start
-		if game_money >= @min_bet
+		if @game_money.to_f >= @min.to_f
 			puts "\nChoose 'Pass' or 'Dont' or 'out' to Cash Out."
 			type = gets.strip.downcase
 			case type
@@ -128,7 +128,7 @@ class Craps
 		bet = gets.strip
 			if bet == 'back'
 				return start
-			elsif bet =~ /^\$?\d*\.?\d+$/ && bet.to_i < game_money.to_i && bet.to_i >= @min_bet
+			elsif bet =~ /^\$?\d*\.?\d+$/ && bet.to_i < game_money.to_i && bet.to_i >= @min
 				@pass_bet = bet.to_f
 				puts "\nYou bet $#{'%.02f' % @pass_bet}."
 				return come_out_roll
@@ -145,7 +145,7 @@ class Craps
 			@pass_bet = 0
 			return start
 		end
-		@game_money -= @pass_bet
+		@game_money -= @pass_bet.to_f
 		co = 2 + rand(6) + rand(6)
 		puts "Come out roll is...#{co}!"
 		if @pass == "Don't Pass"
@@ -195,9 +195,9 @@ class Craps
 
 	def point_rolls
 		print "\nPress enter to roll." 
-		puts " Type 'odds' to place a Odds bet." if @game_money >= @pass_bet && @odds == false
+		puts " Type 'odds' to place a Odds bet." if @game_money.to_f >= @pass_bet && @odds == false
 		input = gets
-		if input.strip.downcase == "odds" && @game_money >= @pass_bet && @odds == false
+		if input.strip.downcase == "odds" && @game_money.to_f >= @pass_bet && @odds == false
 			odds_fun
 		elsif input.strip.downcase == "odds"
 			puts "Whoops! You don't have enough money to place an odds bet."
@@ -236,7 +236,7 @@ class Craps
 
 	def odds_fun
 		puts "\nType in your Odds bet or type 'back' to cancel."
-		bettable = @game_money <= (2 * @pass_bet) ? @game_money : (2 * @pass_bet)
+		bettable = @game_money.to_f <= (2 * @pass_bet) ? @game_money : (2 * @pass_bet)
 		puts "You may bet between $#{'%.02f' % @pass_bet} and $#{'%.02f' % bettable}.\n"
 		bet = gets.strip
 		while true
@@ -244,7 +244,7 @@ class Craps
 				return point_rolls
 			elsif bet =~ /^\$?\d*\.?\d+$/ && bet.to_i >= @pass_bet && bet.to_i <= bettable.to_i
 				@odds_bet = bet.to_f
-				@game_money -= @odds_bet
+				@game_money.to_f -= @odds_bet
 				puts "\nYour Odds bet is $#{'%.02f' % @odds_bet}."
 				@odds = true
 				puts "Press enter to roll."
@@ -336,11 +336,6 @@ class Craps
 		end
 	end
 end
-
-c1 = Craps.new
-
-c1.instructions
-c1.start
 
 
 
