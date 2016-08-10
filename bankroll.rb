@@ -36,7 +36,7 @@ class Bankroll
 		@history.push([game_name, difference.to_f, @bankroll.to_f])
 	end
 
-	def check_balanace
+	def check_balance
 		puts @history
 		puts "Your current balance is $#{'%.02f' % @bankroll}."
 		puts "You started with $#{'%.02f' % @starting_value}."

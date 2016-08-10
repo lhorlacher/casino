@@ -10,6 +10,7 @@ class Slots
 		@min = 1.00
 		@name = 'Slots'
 		@game_money = 1
+		@result = []
 	end
 
 	def instructions
@@ -17,34 +18,36 @@ class Slots
 		puts 'Each spin costs $1.00.'
 	end
 	def start
-		if @game_money.to_f > @min.to_f
+		while @game_money.to_f >= @min.to_f
 			puts 'Hit enter to spin or "cash out" to go back.'
-			result = []
 			spin = gets
 			case spin
 			when "\n"
-				@game_money = @game_money.to_f - 1
 				result = [@spool1.sample, @spool2.sample, @spool3.sample]
-				if result[0] == result[1] && result[0] == result[2]
 					puts "#{result[0]} | #{result[1]} | #{result[2]}"
-					puts 'YOU WON $32.00!!'
+				if result[0] == result[1] && result[0] == result[2]
+					puts 'YOU WON $15.00!!'
 					puts 'Hit enter to spin again or quit to exit'
 					@game_money = @game_money.to_f + 32
+				elsif result[0] == result[1] || result[1] == result[2] || result[0] == result[2]
+					puts 'Meh.  You got your money back'
+					puts 'Hit enter to spin again or quit to exit'
+					@game_money = @game_money.to_f + @min.to_f
 				else
-					puts result
 					puts 'No win here'
 				end
+				@game_money = @game_money.to_f - 1
+				puts @game_money
 			when /^cas\.*/
+				puts "You cashed out with \$#{@game_money}"
 				return @game_money
-				exit(0)
 			else
 				puts 'Just hit enter.  Not too hard...'
 			end
-		else
-			puts 'You are out of money for this game!'
-			puts '-----------------------------------'
-			exit (0)
 		end
+		puts 'You are out of money for this game!'
+		puts '-----------------------------------'
+		return @game_money
 	end
 end
 

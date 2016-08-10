@@ -41,7 +41,7 @@ class Casino
 			if @player == nil
 				puts 'No player selected to check bankroll.'
 			else
-				puts "#{@player.bankroll.bankroll}"
+				@player.bankroll.check_balance
 			end
 			main_menu
 		when '3'
@@ -140,11 +140,13 @@ class Casino
 				bet_options(money_commit)
 				if money_commit.to_f > @player.bankroll.bankroll
 					puts "You don\'t have that much! You must play less than \$#{@player.bankroll.bankroll}."
+				elsif money_commit.to_f == 0
+					puts 'Enter a number higher than 0 or use back'
 				else
 					break
 				end
 			end
-			@games[@game_index].instructions
+			@games[@game_index].instructions if money_commit.to_i > 0
 			@games[@game_index].game_money = money_commit
 			game = @games[@game_index].name
 			returned_money = @games[@game_index].start
@@ -158,9 +160,8 @@ class Casino
 		when /bac.*/
 			choose_game
 		when /^\$?\d*\.*\d+$/
-
-		else
-			puts 'Enter an amount or use "back" to return to menu.'
+			#do nothing
+		when "\n"
 		end
 	end
 
