@@ -4,7 +4,7 @@
 require_relative 'bankroll'
 
 class Player
-attr_accessor :name, :good_luck, :back_luck, :bankroll
+attr_accessor :name, :good_luck, :bad_luck, :bankroll
 
 	def initialize
 		@name, @good_luck, @bad_luck = name_setup

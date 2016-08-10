@@ -2,12 +2,12 @@ require_relative 'player'
 require_relative 'bankroll'
 require_relative 'high-low'
 require_relative 'slots'
+require_relative 'randomluck.rb'
 # require 'pry'
 # require 'colorize'
 
 
 class Casino
-
 	def initialize
 		@games = []
 		@game_index = nil
@@ -15,6 +15,7 @@ class Casino
 		@player = nil
 		puts 'Welcome to the Casino!'
 		@games = [Slots.new, High_low.new]
+		@luck = Luck.new
 		main_menu
 		# create_player
 	end
@@ -118,7 +119,7 @@ class Casino
 		while true
 			choice = gets.strip
 			menu_options(choice)
-			if choice.to_i <= 0 || choice.to_i > num
+			if choice.to_i <= 0 || choice.to_i > num - 1
 				puts 'Please choose a number from the menu'
 			else
 				@game_index = choice.to_i - 1
@@ -128,6 +129,7 @@ class Casino
 	end
 
 	def play_game
+		@player.bankroll.bankroll += @luck.good_or_bad(@player.good_luck, @player.bad_luck).to_i
 		if @games[@game_index].min > @player.bankroll.bankroll
 			puts "I'm sorry, the minimum bet for #{@games[game_choice].name} is \$#{@games[game_choice].min}."
 			puts "You only have \$#{@bankroll.bankroll}."
