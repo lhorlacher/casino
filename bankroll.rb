@@ -5,29 +5,38 @@ class Bankroll
 	attr_accessor :bankroll
 
 	def initialize
-		@starting_value, @bankroll = setup
+		@starting_value = 300
+		@bankroll = 500
 		@mom = true
 		@mom_budget = 1 + rand(200)
 		@history = []
 		@boss_time = 10
 		@sad_words1 = ["child", "children", "kids", "baby", "little", "grankids"]
 		@sad_sords2 = ["died", "dying", "lost", "scared", "hungry", "starving", "hurt", "please", "sorry", "thank", "thanks"]
+		@trivia = true
+		@trivia_questions = {
+			"During the Great Plague, what was painted on the front doors of plague ridden houses?" => "cross",
+			"Which Barbadian singer stayed ten weeks at number 1 with `Umbrella`?" => "rihanna",
+			"Genghis Khan founded which empire?" => "mongol",
+			"What is a more common name for the Aurora Borealis?" => "northern lights",
+			"Who painted the famous painting The Scream?" => "edward munch",
+			"What is the third book of the Bible?" => "leviticus",
+			"In cycling, what colour jersey is awarded to the leader in a stage race of the Tour de France?" => "yellow",
+			"What is the lightest chemical element?" => "hydrogen",
+			"Which author created Elinor Dashwood, Emma Woodhouse and Catherine Morland?" => "jane austen",
+			"In horse racing, what betting odds are known as a `carpet`? (format x-y)" => "3-1",
+			"Who had a number one hit single in 1964 with `Little Red Rooster`?" => "rolling stones",
+			"The does the chemical symbol Pb stand for?" => "lead",
+			"Who wrote the novel `Fantastic Mr. Fox`?" => "roald dahl",
+			"Which american state has a name that ends in three vowels?" => "hawaii",
+			"In what sport do players take long and short corners?" => "Hockey"
+		}
+
 	end
 
 	def setup 
-		puts "How much money do you have in your pocket?"
-		while true
-			 input = gets.strip
-			if input =~ /^\$?\d*\.?\d+$/
-				starting_value = input.gsub(/\$/, "").to_f
-				bankroll = input.gsub(/\$/, "").to_f
-				puts "Your bankroll has been set to: #{'%.02f' % bankroll}."
-				return starting_value, bankroll
-				break
-			else
-				puts "Please enter a dollar amount larger than $0."
-			end
-		end
+		puts "\nYou have 300 in your bankroll."
+		puts "If you run out, you may have other options."
 	end
 
 	def game_result(money_commit, money_final, game_name)
@@ -51,9 +60,10 @@ class Bankroll
 	end
 
 	def money_options
-		puts "You can lie to your mom and ask for money..."
-		puts "You could also ask \"the boss\" behind the casino..."
-		puts "Type 'mom', 'boss' or save your dignity and type 'back'."
+		puts "\n\nYou can lie to your mom and ask for money..."
+		puts "You can ask \"the boss\" behind the casino..."
+		puts "Or you can be humiliated on a game show..."
+		puts "Type 'mom', 'boss', 'show' or save your dignity and type 'back'."
 		while @mom == true
 			nav = gets.strip.downcase
 			case nav
@@ -62,9 +72,15 @@ class Bankroll
 				break
 			when "mom" && @mom == false
 				puts "Sorry, dear. I am out..."
-			when "boss"
+			when "boss" && @boss == true
 				boss_decision
 				break
+			when "boss" && @boss == false
+				puts "Come back when you have the rest of my money!"
+			when "game", "show", "game show" && game_show == true
+				game_show
+			when "game", "show", "game show" && game_show == false
+				puts "Sorry. We can't have you back on the show."
 			when "back"
 				puts "Whew... Good call."
 			break
@@ -93,7 +109,8 @@ class Bankroll
 				puts "I don't get the sense that you are being honest."
 				puts "Sorry. I can't help this time."
 				@mom = false
-				game_result(0, "Mom")
+				game_result(0, 0, "Mom")
+				return money_options
 			end
 		end
 	end
@@ -111,31 +128,92 @@ class Bankroll
 				puts "Sure, dear. I just wired you the money. Check your account."
 				@mom = false
 				money_count = 2
-				game_result(dollars.to_f, "Mom")
+				game_result(0, dollars.to_f, "Mom")
+				return money_options
 			elsif money_count < 2
 				puts "I am sure you don't need that much."
 				puts "How much do you really need?"
 			else
 				puts "That's just too much. Sorry."
 				puts "I will just have to fly out. See you in 6 hours!"
-				game_result(0, "Mom")
+				@mom = false
+				game_result(0, 0, "Mom")
+				return money_options
 			end
 		end
 	end
 
 	def boss_decision
+		boss_mood = 0
 		puts "Huh. You don't look real reliable."
 		puts "How do I know I will get my money back?"
 		puts "Options: laugh, reassure, stutter"
 		action = gets.strip.downcase
 		case action
 		when "laugh"
-			puts "Ok. How much do you need?"
-			amount = gets.strip.to_f
+			puts "The boss lightens up."
+			boss_mood += 2
+		when "reassure"
+			puts "The boss doesn't react."
+			boss_mood += 1
+		when "stutter"
+			puts "The boss scowls."
 		else
-			puts "PLACEHOLDER"
+			puts "The boss scowls."
 		end
+		puts "When will you pay me back?"
+		puts "Options: tomorrow, soon, next week"
+		action = gets.strip.downcase
+		case action
+		when "soon"
+			puts "The boss nods."
+			boss_mood += 2
+		when "next week"
+			puts "The boss shrugs."
+			boss_mood += 1
+		when "tomorrow"
+			puts "Yeah.... right."
+		else
+			puts "The boss scowls."
+		end
+		puts "What do you need this money for?"
+		puts "Options: food, medical bills, mortgage" 
+		action = gets.strip.downcase
+		case action
+		when "food"
+			puts "The boss laughs out loud."
+			boss_mood += 1
+		when "medical bills"
+			puts "The boss nods."
+			boss_mood += 2
+		when "mortgage"
+			puts "The boss looks disappointed."
+		else
+			puts "The boss scowls."
+		end
+		if boss_mood >= 5
+			puts "The boss seems to be in a decent mood."
+			puts "He gives you $500 and says to pay him back next week."
+			game_result(@bankroll, (@bankroll + 300), "Boss")
+			@bankroll += 300
+			@boss = false
+		elsif boss_mood == 4 || boss_mood == 3
+			puts "The boss doesn't seem to like you much."
+			puts "He gives you $100 and says to pay him back asap."
+			game_result(@bankroll, (@bankroll + 100), "Boss")
+			@bankroll += 100
+			@boss = false
+		else
+			puts "The boss is angry."
+			puts "His thugs jump you when you try to leave."
+			puts "You lose half your money...."
+			game_result((@bankroll, (@bankroll / 2), "Boss")
+			@bankroll = @bankroll / 2
+			@boss = false
+		end
+		return money_options
 	end
+
 
 
 
