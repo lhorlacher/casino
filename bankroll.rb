@@ -10,6 +10,7 @@ class Bankroll
 		@mom = true
 		@mom_budget = 1 + rand(200)
 		@history = []
+		@boss = true
 		@boss_time = 10
 		@trivia = true
 		@trivia_questions = [
@@ -40,51 +41,51 @@ class Bankroll
 	def game_result(money_commit, money_final, game_name)
 		@bankroll = @bankroll.to_f - money_commit.to_f + money_final.to_f
 		difference = money_final.to_f - money_commit.to_f
-		@history.push([game_name, difference.to_f, @bankroll.to_f])
-		puts @h
+		result_array = [game_name, difference.to_f, @bankroll.to_f]
+		@history.push(result_array)
 	end
 
-	# def check_balance
-	# 	puts "History"
-	# 	puts "Game Name---Result---New Balance"
-	# 	@history.each do |arr|
-	# 		puts "#{arr[0]}---$#{'%.02f' % arr[1]}---$#{'%.02f' % @arr[2]}"
-	# 	end
-	# 	puts "Your current balance is $#{'%.02f' % @bankroll}."
-	# 	puts "You started with $#{'%.02f' % @starting_value}."
-	# 	difference = @bankroll - @starting_value
-	# 	if difference >= 0
-	# 		puts "To date you have lost $#{'%.02f' % difference}."
-	# 	elsif difference < 0
-	# 		puts "To date you have won $#{'%.02f' % difference}."
-	# 	end
-	# 	puts "Press enter to return to menu."
-	# 	gets
-	# end
+	def check_balance
+		puts "\nHistory:"
+		puts "Game Name---Result---New Balance"
+		@history.each do |arr|
+			puts "#{arr[0]}---$#{'%.02f' % arr[1]}---$#{'%.02f' % arr[2]}"
+		end
+		
+		puts "\nYou started with $#{'%.02f' % @starting_value}."
+		difference = @bankroll - @starting_value
+		if difference >= 0
+			puts "To date you have won $#{'%.02f' % difference}."
+		elsif difference < 0
+			puts "To date you have lost $#{'%.02f' % (-1 * difference)}."
+		end
+		puts "Your current balance is $#{'%.02f' % @bankroll}."
+		puts "\nPress enter to return to menu."
+		gets
+	end
 
 	def money_options
 		puts "\n\nYou can lie to your mom and ask for money..."
 		puts "You can ask \"the boss\" behind the casino..."
 		# puts "Or you can be humiliated on a game show..."
 		puts "Type 'mom' or 'boss' or save your dignity and type 'back'."
-		while @mom == true
+		while true
 			nav = gets.strip.downcase
-			case nav
-			when "mom" && @mom == true
+			if nav == "mom" && @mom == true
 				mom_excuse
 				break
-			when "mom" && @mom == false
+			elsif nav == "mom" && @mom == false
 				puts "Sorry, dear. I am out..."
-			when "boss" && @boss == true
+			elsif nav == "boss" && @boss == true
 				boss_decision
 				break
-			when "boss" && @boss == false
+			 elsif nav == "boss" && @boss == false
 				puts "Come back when you have the rest of my money!"
 			# when "game", "show", "game show" && @game_show == true
 			# 	game_show
 			# when "game", "show", "game show" && @game_show == false
 			# 	puts "Sorry. We can't have you back on the show."
-			when "back"
+			elsif nav == "back"
 				puts "Whew... Good call."
 			break
 			else
@@ -94,10 +95,10 @@ class Bankroll
 	end	
 
 	def mom_excuse
-		sad_words1 = ["child", "children", "kids", "baby", "little", "grankids"]
+		sad_words1 = ["child", "children", "kids", "baby", "little", "grankids", "grandkids"]
 		sad_words2 = ["died", "dying", "lost", "scared", "hungry", "starving", "hurt", "please", "sorry", "thank", "thanks"]
-		puts "Hi honey. What's the problem?"
-		puts "**Hint: She loves her grandkids mmore than you.**"
+		puts "'Hi honey. What's the problem?'"
+		puts "**Hint: Make up a good excuse."
 		excuse_count = 0
 		while excuse_count < 2
 			excuse_count += 1
@@ -109,7 +110,7 @@ class Bankroll
 				mom_money
 			elsif excuse_count < 2
 				puts "Oh, is that all? I am not sure I can help..."
-				puts "**Try a different excuse**"
+				puts "**Hint: She loves her grandkids mmore than you.**"
 			else
 				puts "I don't get the sense that you are being honest."
 				puts "Sorry. I can't help this time."
@@ -131,6 +132,7 @@ class Bankroll
 			puts dollars
 			if dollars =~ /^\$?\d*\.?\d+$/ && dollars.to_f >= 0.0 && dollars.to_f <= @mom_budget.to_f
 				puts "Sure, dear. I just wired you the money. Check your account."
+				puts "And take care of my grandkids!"
 				@mom = false
 				money_count = 2
 				game_result(0, dollars.to_f, "Mom")
@@ -150,8 +152,8 @@ class Bankroll
 
 	def boss_decision
 		boss_mood = 0
-		puts "\nHuh. You don't look real reliable."
 		puts "\nHow do I know I will get my money back?"
+		puts "**Hint: Get the boss in a good mood**"
 		puts "Options: laugh, reassure, stutter"
 		action = gets.strip.downcase
 		case action
@@ -177,7 +179,7 @@ class Bankroll
 			puts "The boss shrugs."
 			boss_mood += 1
 		when "tomorrow"
-			puts "Yeah.... right."
+			puts "'Yeah.... right.'"
 		else
 			puts "The boss scowls."
 		end
@@ -201,13 +203,13 @@ class Bankroll
 		action = gets.strip.downcase
 		case action
 		when "ask", "ask for money", "money"
-			if boss_mood >= 5
+			if boss_mood > 5
 				puts "\nThe boss seems to be in a decent mood."
 				puts "He gives you $500 and says to pay him back next week."
 				game_result(@bankroll, (@bankroll + 300), "Boss")
 				@bankroll += 300
 				@boss = false
-			elsif boss_mood == 4 || boss_mood == 3
+			elsif boss_mood == 4 || boss_mood == 3 || boss_mood == 5
 				puts "\nThe boss doesn't seem to like you much."
 				puts "He gives you $100 and says to pay him back asap."
 				game_result(@bankroll, (@bankroll + 100), "Boss")
@@ -229,7 +231,7 @@ class Bankroll
 				@bankroll += 100
 				@boss = false
 			elsif boss_mood == 4 || boss_mood == 3
-				puts "\nThe boss let's you leave without consquences."
+				puts "\nThe boss doesn't care enough to care what you do."
 				puts "He shouts that you need to watch your back."
 				game_result(@bankroll, (@bankroll), "Boss")
 				@bankroll += 0
@@ -282,7 +284,6 @@ end
 	# 	end
 
 end
-
 
 
 

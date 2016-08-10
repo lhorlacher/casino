@@ -43,7 +43,7 @@ class Casino
 			if @player == nil
 				puts 'No player selected to check bankroll.'
 			else
-				puts "#{@player.bankroll.bankroll}"
+				@player.bankroll.check_balance
 			end
 			main_menu
 		when '3'
@@ -77,6 +77,10 @@ class Casino
 	end
 
 	def get_more_money
+		if @players_list.length < 1
+			puts 'You must create a player first.'
+			main_menu
+		end
 		@player.bankroll.money_options
 		main_menu
 	end
