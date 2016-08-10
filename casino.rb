@@ -29,7 +29,7 @@ class Casino
 		puts '6. Quit casino'
 		while true
 			user_input = gets.to_i
-			if user_input > 5 || user_input == 0
+			if user_input > 6 || user_input == 0
 				puts 'Please choose a number'
 			else
 				break
