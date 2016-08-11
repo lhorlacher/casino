@@ -9,7 +9,6 @@ class Deck
    @suits = ['Spades', 'Diamonds', 'Clubs', 'Hearts']
    @cards = []
    @card_index = (0..51).to_a
-   generate_deck
  end
  
  def generate_deck

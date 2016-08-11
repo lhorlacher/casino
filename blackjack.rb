@@ -38,6 +38,7 @@ class BlackJack
 			puts "You don't have have enough to play this game!"
 			return @game_money
 		end
+		@deck.generate_deck
 		@dealer_cards = []
 		@player_cards = []
 		@dealer_total = 0
