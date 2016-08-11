@@ -2,7 +2,7 @@ require_relative 'deck'
 
 class BlackJack
 	attr_accessor :deck, :game_money, :min, :player_total, :dealer_total, :dealer_cards,
-				  :player_cards, :dealer_hidden, :bet
+				  :player_cards, :dealer_hidden, :bet, :name
 	def initialize
 		@deck = Deck.new
 		@game_money
@@ -13,6 +13,7 @@ class BlackJack
 		@player_total = 0
 		@dealer_hidden = []
 		@bet = 0
+		@name = BlackJack
 	end
 
 	def instructions
@@ -33,11 +34,23 @@ class BlackJack
 	end
 
 	def start
-		puts 'How much would you like to bet on this hand?'
+		if @game_money.to_f <= 5
+			puts "You don't have have enough to play this game!"
+			return @game_money
+		end
+		@dealer_cards = []
+		@player_cards = []
+		@dealer_total = 0
+		@player_total = 0
+		@dealer_hidden = 0
+		puts '============================================'
+		puts 'Place your bet or use \'back\' to return to menu.'
 		puts "You have \$#{@game_money}"
 		while true
 			@bet = gets.to_f
-			if @bet < @min
+			if @bet == 'back'
+				@game_money
+			elsif @bet < @min
 				puts 'Please place a real bet'
 			else
 				break
@@ -68,10 +81,11 @@ class BlackJack
 			puts "The dealer's total is #{card_sum(dealer_cards)}"
 			if card_sum(dealer_cards) == 21
 				puts "This is a push! You get your \$#{@bet} back, but don't win any."
-				return @game_money = @game_money + @bet
+				return @game_money = @game_money.to_f + @bet.to_f
 			else
-				puts "You win!! You bet #{@bet}. You win #{@bet * 1.5}!"
-				return @game_money = @game_money + @bet * 1.5
+				puts "You win!! You bet #{@bet}. You get it back plus another \$#{@bet}!"
+				@game_money += (@bet.to_f * 2)
+				return start
 			end
 		else
 			hit_or_stay
@@ -114,68 +128,61 @@ class BlackJack
 
 	def hit_or_stay
 		puts 'Hit or stay?'
-		while true
-			hit_stay = gets.strip
-			case hit_stay.downcase
-			when 'hit'
-				new_card = @deck.deal_card
-				@player_card_tracker(new_card)
-				puts "Your new card is #{new_card}"
-				puts "Your total is #{card_sum(@player_cards)}"
-				if card_sum(@player_cards) > 21
-					puts "You bust! You lost \$#{bet}."
-					return start
-				end
-				hit_or_stay
-			when 'stay'
-				return dealer_hit_or_stay
-			else
-				puts 'You have to choose hit or stay'
+		hit_stay = gets.strip
+		case hit_stay.downcase
+		when 'hit'
+			new_card = @deck.deal_card
+			player_card_tracker(new_card)
+			puts "Your new card is #{new_card}"
+			puts "Your total is #{card_sum(@player_cards)}"
+			if card_sum(@player_cards) > 21
+				puts "You bust! You lost \$#{bet}."
+				return start
 			end
+			hit_or_stay
+		when 'stay'
+			puts "Dealer shows his hidden card.  It is: #{@dealer_hidden}"
+			return dealer_hit_or_stay
+		else
+			puts 'You have to choose hit or stay'
+			hit_or_stay
 		end
 	end
 
 	def dealer_hit_or_stay
-		puts "Dealer shows his hidden card which is: #{@dealer_hidden}"
-		puts "That means dealer total is #{card_sum(@dealer_cards)}"
+		puts "Dealer total is #{card_sum(@dealer_cards)}"
 		if card_sum(dealer_cards) == 21
 			puts "Dealer Blackjack! Dealer wins! You lose \$#{@bet}"
 			return start
-		elsif card_sum(dealer_cards) > card_sum(player_cards)
+		elsif card_sum(@dealer_cards) > card_sum(@player_cards)
 			puts "Dealer wins with a total of #{card_sum(@dealer_cards)}. You have #{card_sum(@player_cards)}"
 			return start
-		elsif card_sum(dealer_cards) <= 16
+		elsif card_sum(@dealer_cards) <= 16
 			while true
 				puts "Dealer total is #{card_sum(@dealer_cards)}. He takes another card..."
 				puts "The new card is #{new_card = @deck.deal_card}"
 				dealer_card_tracker(new_card)
 				puts "Dealer total is now #{card_sum(@dealer_cards)}"
-				if card_sum(@dealer_cards) > card_sum(@player_cards) && card_sum(@dealer_cards) <= 21
+				if card_sum(@dealer_cards) > card_sum(@player_cards) && card_sum(@dealer_cards) <= 21 && card_sum(@dealer_cards) > 16
 					puts "Dealer wins with a total of #{card_sum(@dealer_cards)}. You have #{card_sum(@player_cards)}"
 					return start
 				elsif card_sum(@dealer_cards) > 21
 					puts "Dealer bust! You win!"
+					@game_money += (@bet.to_f * 2)
 					return start
-				elsif
-
-
-
-end
-
-
-
-black = BlackJack.new
-black.instructions
-black.start
-puts black.player_total
-puts black.dealer_total
-puts black.player_cards
-puts black.dealer_cards
-
-array = ['5', '8', '11']
-puts array[0].to_i
-array.each do |i|
-	puts i.to_i
+				elsif card_sum(@dealer_cards) >= 17 && card_sum(@dealer_cards) < card_sum(@player_cards)
+					puts "You win!  Dealer: #{card_sum@dealer_cards} You:#{card_sum@player_cards}"
+					@game_money += (@bet.to_f * 2)
+					return start
+				elsif card_sum(@dealer_cards) == card_sum(@player_cards) && card_sum(@dealer_cards) > 16
+					puts "Push! Dealer:#{card_sum(@dealer_cards)} You:#{card_sum(@player_cards)}"
+					@game_money += @bet.to_f
+				else #dealer still under 16
+					#allow loop to continue
+				end
+			end
+		end
+	end
 end
 
 

@@ -4,6 +4,7 @@ require_relative 'high-low'
 require_relative 'slots'
 require_relative 'randomluck'
 require_relative 'craps'
+require_relative 'blackjack'
 # require 'pry'
 # require 'colorize'
 
@@ -15,7 +16,7 @@ class Casino
 		@players_list = []
 		@player = nil
 		puts 'Welcome to the Casino!'
-		@games = [Slots.new, High_low.new, Craps.new]
+		@games = [Slots.new, High_low.new, Craps.new, BlackJack.new]
 		@luck = Luck.new
 		main_menu
 		# create_player
