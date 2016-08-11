@@ -154,10 +154,14 @@ class BlackJack
 		if card_sum(dealer_cards) == 21
 			puts "Dealer Blackjack! Dealer wins! You lose \$#{@bet}"
 			return start
-		elsif card_sum(@dealer_cards) > card_sum(@player_cards)
+		elsif card_sum(@dealer_cards) > card_sum(@player_cards) && card_sum(@dealer_cards) > 16
 			puts "Dealer wins with a total of #{card_sum(@dealer_cards)}. You have #{card_sum(@player_cards)}"
 			return start
-		elsif card_sum(@dealer_cards) <= 16
+		elsif card_sum(@dealer_cards) < card_sum(@player_cards) && card_sum(@dealer_cards) > 16
+			puts "You win!!"
+			@game_money += @bet.to_f
+			return start
+		elsif card_sum(@dealer_cards) < 17
 			while true
 				puts "Dealer total is #{card_sum(@dealer_cards)}. He takes another card..."
 				puts "The new card is #{new_card = @deck.deal_card}"
